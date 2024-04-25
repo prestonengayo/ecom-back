@@ -20,4 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('Back.urls.product_urls')),  # Utilisez le chemin que vous préférez
+    path('', include('Back.urls.user_urls')),  # Utilisez le chemin que vous préférez
 ]
