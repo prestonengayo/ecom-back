@@ -1,20 +1,18 @@
 from django.contrib.auth.models import User
+from Back.perm import IsAdmin
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
-from Back.permissions import IsAdminOrSelf
 from Back.serializers.user_serializer import UserSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated, IsAdminOrSelf]
+    permission_classes = [IsAdmin]
 
     def get_queryset(self):
         """
-        Optionnellement restreint les données retournées à un seul utilisateur,
-        en autorisant un utilisateur à voir ses propres détails.
+        Cette surcharge permet d'adapter le queryset en fonction de l'utilisateur.
+        Si l'utilisateur n'est pas admin, il ne peut voir que son propre profil.
         """
-        queryset = super().get_queryset()
-        if not self.request.user.is_staff:
-            queryset = queryset.filter(id=self.request.user.id)
-        return queryset
+        if self.request.user.profile.is_admin:
+            return User.objects.all()
+        return User.objects.filter(id=self.request.user.id)

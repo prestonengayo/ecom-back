@@ -16,9 +16,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from Back.views.user_register_view import UserCreate
+from Back.views.token_obtain_pair_view import MyTokenObtainPairView
+
+
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('Back.urls.product_urls')),  # Utilisez le chemin que vous préférez
-    path('', include('Back.urls.user_urls')),  # Utilisez le chemin que vous préférez
+    path('', include('Back.urls.product_urls')),  # le chemin vers le fichier de route des produits product_url
+    path('', include('Back.urls.user_urls')),  # le chemin vers le fichier de route du user user_urls
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'), # route pour le login
+    path('register/', UserCreate.as_view(), name='user_register'), # route pour le register
 ]
