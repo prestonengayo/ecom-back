@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -80,14 +81,13 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'shop', 
-        'USER': 'root', 
-        'PASSWORD': 'Janvier9.@',  
-        'HOST': 'localhost',  
-        'PORT': '3306', 
+        'NAME': os.getenv('MYSQL_DB', 'shop'),
+        'USER': os.getenv('MYSQL_USER', 'monapi'),
+        'PASSWORD': os.getenv('MYSQL_PASSWORD', 'secure_password'),
+        'HOST': os.getenv('MYSQL_HOST', 'db'),
+        'PORT': '3306',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
