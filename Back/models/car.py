@@ -21,6 +21,7 @@ class Car(models.Model):
     color = models.CharField(max_length=50)
     gearbox = models.CharField(max_length=10, choices=GEARBOX_CHOICES, default='manual')
     engine_type = models.CharField(max_length=10, choices=ENGINE_TYPE_CHOICES, default='mechanical')
+    image = models.ImageField(upload_to='cars_images/', null=True, blank=True)  
 
     def __str__(self):
         return f"{self.brand} {self.name} ({self.color})"
