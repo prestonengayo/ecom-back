@@ -7,7 +7,6 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-
 # Définir le répertoire de travail dans le conteneur
 WORKDIR /code
 
@@ -18,10 +17,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copier le reste des fichiers du projet
 COPY . /code/
 
+# Copier le script d'entrée
+COPY entrypoint.sh /code/entrypoint.sh
+
+# Rendre le script exécutable
+RUN chmod +x /code/entrypoint.sh
+
 # Exposer le port sur lequel l'application va écouter
 EXPOSE 8000
 
 # Commande pour démarrer l'application
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-
-
+ENTRYPOINT ["/code/entrypoint.sh"]

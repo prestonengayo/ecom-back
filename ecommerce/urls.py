@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.urls import path, include
 from Back.views.user_register_view import UserCreate
 from Back.views.token_obtain_pair_view import MyTokenObtainPairView
-
+from Back.views.order import CreateOrderView, ListOrdersView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -35,6 +35,8 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'), # route pour le login
     path('register/', UserCreate.as_view(), name='user_register'), # route pour le register
+    path('orders/', ListOrdersView.as_view(), name='list_orders'),
+    path('orders/create/', CreateOrderView.as_view(), name='create_order'),
 ]
 
 

@@ -19,6 +19,7 @@ class Car(models.Model):
     brand = models.CharField(max_length=100)
     description = models.TextField()
     color = models.CharField(max_length=50)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
     gearbox = models.CharField(max_length=10, choices=GEARBOX_CHOICES, default='manual')
     engine_type = models.CharField(max_length=10, choices=ENGINE_TYPE_CHOICES, default='mechanical')
     image = models.ImageField(upload_to='cars_images/', null=True, blank=True)  
