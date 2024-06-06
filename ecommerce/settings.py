@@ -24,6 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-))kx!6*9o_ge$oo_svzhs2spo2p1dpb-8tdu3p4hby$mu%*ep6'
 
+
+STRIPE_SECRET_KEY = 'sk_test_51PMT1o07J6CUXffxwaTBZtmIN2UGOav5dE5kECNYvaZWl7ZIuRT7tfaNu4u1AkKzWMRXL3kStV3UfH5fdq5FtjDp00kVvSqvej'
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51PMT1o07J6CUXffxdzJVOpWZiQMfEXj7gXOCdZ4wYestgpN5r08tKJpeISw02B25hGqtZW1aggjC8Ewls1sfhic500Kb5yBBqe'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -125,6 +129,15 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
     ),
 }
 

@@ -4,6 +4,7 @@
 dockerize -wait tcp://db:3306 -timeout 120s
 
 # Appliquer les migrations
+python manage.py makemigrations
 python manage.py migrate
 
 # Créer un super utilisateur si aucun n'existe
