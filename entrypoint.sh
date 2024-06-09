@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Utiliser l'image Python officielle
 FROM python:3.12.3
 

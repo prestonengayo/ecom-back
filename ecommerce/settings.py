@@ -32,7 +32,13 @@ STRIPE_PUBLISHABLE_KEY = 'pk_test_51PMT1o07J6CUXffxdzJVOpWZiQMfEXj7gXOCdZ4wYestg
 DEBUG = True
 
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
+# Récupérer les hôtes autorisés à partir des variables d'environnement
+allowed_hosts_env = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
+
+# Ajouter l'URL de votre front-end aux hôtes autorisés
+allowed_hosts_env.append('ecom-front-app.azurewebsites.net')
+
+ALLOWED_HOSTS = allowed_hosts_env
 
 
 APPEND_SLASH = True
