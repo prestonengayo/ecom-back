@@ -1,30 +1,19 @@
-# Utiliser l'image Python officielle
-FROM python:3.12.3
+#!/bin/sh
 
-# Install Dockerize
-ENV DOCKERIZE_VERSION v0.6.1
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+# Attendre que la base de données soit disponible
+dockerize -wait tcp://db:3306 -timeout 120s
 
-# Définir le répertoire de travail dans le conteneur
-WORKDIR /code
+# Appliquer les migrations
+python manage.py makemigrations
+python manage.py migrate
 
-# Ajouter les fichiers de dépendances et installer ces dépendances
-COPY requirements.txt /code/
-RUN pip install --no-cache-dir -r requirements.txt
+# Créer un super utilisateur si aucun n'existe
+python manage.py shell -c "
+from django.contrib.auth import get_user_model;
+User = get_user_model();
+if not User.objects.filter(username='admin').exists():
+    User.objects.create_superuser('admin', 'admin@gmail.com', 'adminpass');
+"
 
-# Copier le reste des fichiers du projet
-COPY . /code/
-
-# Copier le script d'entrée
-COPY entrypoint.sh /code/entrypoint.sh
-
-# Rendre le script exécutable
-RUN chmod +x /code/entrypoint.sh
-
-# Exposer le port sur lequel l'application va écouter
-EXPOSE 8000
-
-# Commande pour démarrer l'application
-ENTRYPOINT ["/code/entrypoint.sh"]
+# Démarrer le serveur
+python manage.py runserver 0.0.0.0:8000
