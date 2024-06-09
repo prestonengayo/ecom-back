@@ -22,10 +22,13 @@ services:
     depends_on:
       - db
     environment:
+      ALLOWED_HOSTS: "${ALLOWED_HOSTS},ecom-front-app.azurewebsites.net"
       MYSQL_HOST: db
       MYSQL_USER: monapi
       MYSQL_PASSWORD: secure_password
       MYSQL_DB: shop
+      DATABASE_PORT: 3306
+      PUBLIC_IP: ${PUBLIC_IP}
 
 volumes:
   mysql_data:
