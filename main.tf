@@ -123,7 +123,7 @@ resource "null_resource" "provision_vm" {
   provisioner "remote-exec" {
     inline = [
       "chmod +x /home/adminuser/script.sh",
-      "sudo /home/adminuser/script.sh"
+      "sudo bash /home/adminuser/script.sh"
     ]
 
     connection {

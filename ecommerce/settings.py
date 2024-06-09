@@ -31,7 +31,8 @@ STRIPE_PUBLISHABLE_KEY = 'pk_test_51PMT1o07J6CUXffxdzJVOpWZiQMfEXj7gXOCdZ4wYestg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['20.160.169.86', 'localhost', '127.0.0.1']
+
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
 
 APPEND_SLASH = True

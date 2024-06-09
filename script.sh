@@ -23,8 +23,8 @@ cd ecom-back
 # S'assurer que le fichier entrypoint.sh est exécutable
 chmod +x entrypoint.sh
 
-# S'assurer que le fichier docker-compose.yml est exécutable
-chmod +x docker-compose.yml
+# Récupérer l'adresse IP publique via les métadonnées d'Azure
+PUBLIC_IP=$(curl -H Metadata:true "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/publicIpAddress?api-version=2021-02-01&format=text")
 
-# Lancer les services avec Docker Compose
-sudo docker-compose up -d
+# Lancer les services avec Docker Compose en définissant ALLOWED_HOSTS
+sudo ALLOWED_HOSTS=$PUBLIC_IP docker-compose up -d
