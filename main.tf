@@ -115,16 +115,37 @@ resource "azurerm_virtual_machine" "example" {
   provisioner "file" {
     source      = "docker-compose.yml"
     destination = "/home/adminuser/docker-compose.yml"
+
+    connection {
+      type        = "ssh"
+      user        = "adminuser"
+      private_key = file("~/.ssh/id_rsa")
+      host        = azurerm_public_ip.example.ip_address
+    }
   }
 
   provisioner "file" {
     source      = "entrypoint.sh"
     destination = "/home/adminuser/entrypoint.sh"
+
+    connection {
+      type        = "ssh"
+      user        = "adminuser"
+      private_key = file("~/.ssh/id_rsa")
+      host        = azurerm_public_ip.example.ip_address
+    }
   }
 
   provisioner "file" {
     source      = "script.sh"
     destination = "/home/adminuser/script.sh"
+
+    connection {
+      type        = "ssh"
+      user        = "adminuser"
+      private_key = file("~/.ssh/id_rsa")
+      host        = azurerm_public_ip.example.ip_address
+    }
   }
 
   provisioner "remote-exec" {
