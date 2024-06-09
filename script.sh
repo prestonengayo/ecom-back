@@ -20,6 +20,12 @@ git clone https://github.com/prestonengayo/ecom-back.git
 # Se déplacer dans le dossier du projet
 cd ecom-back
 
+sudo apt-get update
+sudo apt-get install dos2unix
+
+sudo dos2unix entrypoint.sh
+
+
 # S'assurer que le fichier entrypoint.sh est exécutable
 chmod +x entrypoint.sh
 
