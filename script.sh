@@ -22,7 +22,7 @@ cd ecom-back
 
 echo "Mise à jour des paquets et installation de dos2unix"
 sudo apt-get update
-sudo apt-get install dos2unix
+sudo apt-get install -y dos2unix
 
 echo "Conversion du fichier entrypoint.sh"
 sudo dos2unix entrypoint.sh
@@ -36,8 +36,8 @@ PUBLIC_IP=$(curl -H Metadata:true "http://169.254.169.254/metadata/instance/netw
 echo "Lancement des services avec Docker Compose en définissant ALLOWED_HOSTS"
 sudo ALLOWED_HOSTS=$PUBLIC_IP docker-compose up -d
 
-echo "Configuration de Nginx"
-sudo bash -c 'cat > /etc/nginx/sites-available/ecommerce <<EOF
+echo "Configuration de Nginx pour HTTP"
+sudo bash -c "cat > /etc/nginx/sites-available/ecommerce <<EOF
 server {
     listen 80;
     server_name $PUBLIC_IP;
@@ -54,7 +54,7 @@ server {
         root /var/www/html;
     }
 }
-EOF'
+EOF"
 
 echo "Activation de la configuration Nginx"
 sudo ln -s /etc/nginx/sites-available/ecommerce /etc/nginx/sites-enabled/
@@ -64,13 +64,13 @@ echo "Obtention du certificat SSL"
 sudo certbot --nginx -d $PUBLIC_IP --non-interactive --agree-tos --email your-email@example.com
 
 echo "Configuration de Nginx pour rediriger HTTP vers HTTPS"
-sudo bash -c 'cat > /etc/nginx/sites-available/ecommerce <<EOF
+sudo bash -c "cat > /etc/nginx/sites-available/ecommerce <<EOF
 server {
     listen 80;
     server_name $PUBLIC_IP;
 
     location / {
-        return 301 https://$host$request_uri;
+        return 301 https://\$host\$request_uri;
     }
 }
 
@@ -89,7 +89,7 @@ server {
         proxy_set_header X-Forwarded-Proto \$scheme;
     }
 }
-EOF'
+EOF"
 
 echo "Redémarrage de Nginx pour appliquer les modifications"
 sudo systemctl restart nginx
