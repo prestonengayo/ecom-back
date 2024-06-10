@@ -1,40 +1,42 @@
 #!/bin/bash
 
-# Mise à jour et installation de Docker, Git, Nginx, et Certbot
+echo "Mise à jour du système et installation de Docker, Git, Nginx, et Certbot"
 sudo apt-get update
 sudo apt-get install -y docker.io git nginx certbot python3-certbot-nginx
 
-# Installer Docker Compose
+echo "Installation de Docker Compose"
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-# Vérifier l'installation de Docker Compose
+echo "Vérification de l'installation de Docker Compose"
 docker-compose --version
 
-# Ajouter l'utilisateur azureuser au groupe docker
+echo "Ajout de l'utilisateur azureuser au groupe docker"
 sudo usermod -aG docker azureuser
 
-# Cloner le dépôt
+echo "Clonage du dépôt Git"
 git clone https://github.com/prestonengayo/ecom-back.git
 
-# Se déplacer dans le dossier du projet
+echo "Déplacement dans le dossier du projet"
 cd ecom-back
 
+echo "Mise à jour des paquets et installation de dos2unix"
 sudo apt-get update
 sudo apt-get install dos2unix
 
+echo "Conversion du fichier entrypoint.sh"
 sudo dos2unix entrypoint.sh
 
-# S'assurer que le fichier entrypoint.sh est exécutable
+echo "Rendre le fichier entrypoint.sh exécutable"
 chmod +x entrypoint.sh
 
-# Récupérer l'adresse IP publique via les métadonnées d'Azure
+echo "Récupération de l'adresse IP publique via les métadonnées d'Azure"
 PUBLIC_IP=$(curl -H Metadata:true "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/publicIpAddress?api-version=2021-02-01&format=text")
 
-# Lancer les services avec Docker Compose en définissant ALLOWED_HOSTS
+echo "Lancement des services avec Docker Compose en définissant ALLOWED_HOSTS"
 sudo ALLOWED_HOSTS=$PUBLIC_IP docker-compose up -d
 
-# Configurer Nginx
+echo "Configuration de Nginx"
 sudo bash -c 'cat > /etc/nginx/sites-available/ecommerce <<EOF
 server {
     listen 80;
@@ -54,14 +56,14 @@ server {
 }
 EOF'
 
-# Activer la configuration Nginx
+echo "Activation de la configuration Nginx"
 sudo ln -s /etc/nginx/sites-available/ecommerce /etc/nginx/sites-enabled/
 sudo systemctl restart nginx
 
-# Obtenir le certificat SSL
+echo "Obtention du certificat SSL"
 sudo certbot --nginx -d $PUBLIC_IP --non-interactive --agree-tos --email your-email@example.com
 
-# Configurer Nginx pour rediriger HTTP vers HTTPS
+echo "Configuration de Nginx pour rediriger HTTP vers HTTPS"
 sudo bash -c 'cat > /etc/nginx/sites-available/ecommerce <<EOF
 server {
     listen 80;
@@ -89,5 +91,7 @@ server {
 }
 EOF'
 
-# Redémarrer Nginx pour appliquer les modifications
+echo "Redémarrage de Nginx pour appliquer les modifications"
 sudo systemctl restart nginx
+
+echo "Script terminé"
