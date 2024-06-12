@@ -38,6 +38,12 @@ allowed_hosts_env = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 # Ajouter l'URL de votre front-end aux hôtes autorisés
 allowed_hosts_env.append('ecom-front-app.azurewebsites.net')
 
+# Ajouter l'URL de votre front-end aux hôtes autorisés
+allowed_hosts_env.append('ecom-back.shop')
+
+# Ajouter l'URL de votre front-end aux hôtes autorisés
+allowed_hosts_env.append('www.ecom-back.shop')
+
 # Ajouter l'adresse IP publique de la VM aux hôtes autorisés
 public_ip = os.getenv('PUBLIC_IP')
 if public_ip:
