@@ -2,7 +2,6 @@
 
 # Variables
 PUBLIC_IP=$(curl -H Metadata:true "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/publicIpAddress?api-version=2021-02-01&format=text")
-DOMAIN="ecom-back.shop"
 
 echo "Mise à jour du système et installation de Docker, Git, Nginx"
 sudo apt-get update
@@ -37,14 +36,17 @@ chmod +x entrypoint.sh
 echo "Lancement des services avec Docker Compose en définissant ALLOWED_HOSTS"
 sudo ALLOWED_HOSTS=$PUBLIC_IP docker-compose up -d
 
-echo "Installation de Certbot"
-sudo apt-get install -y certbot python3-certbot-nginx
+echo "Génération du certificat auto-signé"
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt -subj "/CN=$PUBLIC_IP"
+
+echo "Création du fichier de paramètres Diffie-Hellman"
+sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 
 echo "Création du fichier de configuration Nginx pour HTTP"
 sudo bash -c "cat > /etc/nginx/sites-available/ecommerce <<EOF
 server {
     listen 80;
-    server_name $DOMAIN;
+    server_name $PUBLIC_IP;
 
     location / {
         proxy_pass http://127.0.0.1:8000;
@@ -53,37 +55,23 @@ server {
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
     }
-
-    location /.well-known/acme-challenge/ {
-        root /var/www/html;
-    }
 }
 EOF"
 
 echo "Activation de la configuration Nginx"
 sudo ln -s /etc/nginx/sites-available/ecommerce /etc/nginx/sites-enabled/
-sudo systemctl restart nginx
-
-echo "Obtention du certificat SSL signé par Let's Encrypt"
-sudo certbot --nginx -d $DOMAIN --non-interactive --agree-tos --email prestonengayo9@gmail.com
+sudo systemctl start nginx
+sudo systemctl enable nginx
 
 echo "Création du fichier de configuration Nginx pour HTTPS"
 sudo bash -c "cat > /etc/nginx/sites-available/ecommerce-ssl <<EOF
 server {
-    listen 80;
-    server_name $DOMAIN;
-
-    location / {
-        return 301 https://$DOMAIN\$request_uri;
-    }
-}
-
-server {
     listen 443 ssl;
-    server_name $DOMAIN;
+    server_name $PUBLIC_IP;
 
-    ssl_certificate /etc/letsencrypt/live/$DOMAIN/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/$DOMAIN/privkey.pem;
+    ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
+    ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
+    ssl_dhparam /etc/ssl/certs/dhparam.pem;
 
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_prefer_server_ciphers on;
